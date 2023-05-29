@@ -197,13 +197,13 @@ function install_python_packages() {
 function activate_dab() {
     apt-get install libncurses5 -y
     sed -i '/./,/^$/!d' /boot/config.txt
-    sed -i 's/^# DAB Setup.*//' /boot/config.txt
+    sed -i 's/^[all] # DAB Setup.*//' /boot/config.txt
     sed -i 's/^dtparam=spi=on.*//' /boot/config.txt
     sed -i 's/^dtparam=i2s=on.*//' /boot/config.txt
     sed -i 's/^dtoverlay=audiosense-pi.*//' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# DAB Setup' >> /boot/config.txt"
+    sh -c "echo '[all] # DAB Setup' >> /boot/config.txt"
     sh -c "echo 'dtparam=spi=on' >> /boot/config.txt"
     sh -c "echo 'dtparam=i2s=on' >> /boot/config.txt"
     sh -c "echo 'dtoverlay=audiosense-pi' >> /boot/config.txt"
@@ -219,10 +219,10 @@ function activate_i2c() {
     sed -i '/./,/^$/!d' /boot/config.txt
     sed -i '/dtparam=i2c_arm=/d' /boot/config.txt
     sed -i '/dtparam=i2c2_iknowwhatimdoing/d' /boot/config.txt
-    sed -i 's/^# I2C Bus.*//' /boot/config.txt
+    sed -i 's/^[all] # I2C Bus.*//' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# I2C Bus' >> /boot/config.txt"
+    sh -c "echo '[all] # I2C Bus' >> /boot/config.txt"
     sh -c "echo 'dtparam=i2c_arm=on' >> /boot/config.txt"
     sh -c "echo 'dtparam=i2c2_iknowwhatimdoing' >> /boot/config.txt"
 }
@@ -231,10 +231,10 @@ function activate_overscan() {
     sed -i '/./,/^$/!d' /boot/config.txt
     sed -i '/overscan_top=/d' /boot/config.txt
     sed -i '/overscan_bottom=/d' /boot/config.txt
-    sed -i 's/^# Overscan.*//' /boot/config.txt
+    sed -i 's/^[all] # Overscan.*//' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# Overscan' >> /boot/config.txt"
+    sh -c "echo '[all] # Overscan' >> /boot/config.txt"
     sh -c "echo 'overscan_top=12' >> /boot/config.txt"
     sh -c "echo 'overscan_bottom=12' >> /boot/config.txt"
 }
@@ -242,10 +242,10 @@ function activate_overscan() {
 function activate_mpc() {
     sed -i '/./,/^$/!d' /boot/config.txt
     sed -i '/dtoverlay=mcp2515-can0/d' /boot/config.txt
-    sed -i 's/^# MPC.*//' /boot/config.txt
+    sed -i 's/^[all] # MPC.*//' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# MPC' >> /boot/config.txt"
+    sh -c "echo '[all] # MPC' >> /boot/config.txt"
     sh -c "echo 'dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000' >> /boot/config.txt"
 }
 
@@ -259,11 +259,11 @@ function activate_gps() {
 
     # Config.txt UART
     sed -i '/./,/^$/!d' /boot/config.txt
-    sed -i 's/^# GPS Setup.*//' /boot/config.txt
+    sed -i 's/^[all] # GPS Setup.*//' /boot/config.txt
     sed -i '/enable_uart=1/d' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# GPS Setup' >> /boot/config.txt"
+    sh -c "echo '[all] # GPS Setup' >> /boot/config.txt"
     sh -c "echo 'enable_uart=1' >> /boot/config.txt"
 
     # GPSD, use UART
@@ -275,22 +275,22 @@ function activate_gps() {
 function activate_watchdog() {
     # config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
-    sed -i 's/^# Watchdog.*//' /boot/config.txt
+    sed -i 's/^[all] # Watchdog.*//' /boot/config.txt
     sed -i '/dtparam=watchdog=on/d' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# Watchdog' >> /boot/config.txt"
+    sh -c "echo '[all] # Watchdog' >> /boot/config.txt"
     sh -c "echo 'dtparam=watchdog=on' >> /boot/config.txt"
 }
 
 function activate_ds18b20() {
     # config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
-    sed -i 's/^# DS18B20 Temperature Sensor.*//' /boot/config.txt
+    sed -i 's/^[all] # DS18B20 Temperature Sensor.*//' /boot/config.txt
     sed -i '/dtoverlay=w1-gpio/d' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
-    sh -c "echo '# DS18B20 Temperature Sensor' >> /boot/config.txt"
+    sh -c "echo '[all] # DS18B20 Temperature Sensor' >> /boot/config.txt"
     sh -c "echo 'dtoverlay=w1-gpio' >> /boot/config.txt"
 }
 
