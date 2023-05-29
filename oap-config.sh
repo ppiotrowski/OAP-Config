@@ -218,11 +218,35 @@ function activate_rtc() {
 function activate_i2c() {
     sed -i '/./,/^$/!d' /boot/config.txt
     sed -i '/dtparam=i2c_arm=/d' /boot/config.txt
+    sed -i '/dtparam=i2c2_iknowwhatimdoing/d' /boot/config.txt
     sed -i 's/^# I2C Bus.*//' /boot/config.txt
     sed -i '/./,/^$/!d' /boot/config.txt
     sh -c "echo '' >> /boot/config.txt"
     sh -c "echo '# I2C Bus' >> /boot/config.txt"
     sh -c "echo 'dtparam=i2c_arm=on' >> /boot/config.txt"
+    sh -c "echo 'dtparam=i2c2_iknowwhatimdoing' >> /boot/config.txt"
+}
+
+function activate_overscan() {
+    sed -i '/./,/^$/!d' /boot/config.txt
+    sed -i '/overscan_top=/d' /boot/config.txt
+    sed -i '/overscan_bottom=/d' /boot/config.txt
+    sed -i 's/^# Overscan.*//' /boot/config.txt
+    sed -i '/./,/^$/!d' /boot/config.txt
+    sh -c "echo '' >> /boot/config.txt"
+    sh -c "echo '# Overscan' >> /boot/config.txt"
+    sh -c "echo 'overscan_top=12' >> /boot/config.txt"
+    sh -c "echo 'overscan_bottom=12' >> /boot/config.txt"
+}
+
+function activate_mpc() {
+    sed -i '/./,/^$/!d' /boot/config.txt
+    sed -i '/dtoverlay=mcp2515-can0/d' /boot/config.txt
+    sed -i 's/^# MPC.*//' /boot/config.txt
+    sed -i '/./,/^$/!d' /boot/config.txt
+    sh -c "echo '' >> /boot/config.txt"
+    sh -c "echo '# MPC' >> /boot/config.txt"
+    sh -c "echo 'dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000' >> /boot/config.txt"
 }
 
 function set_permissions() {
@@ -283,6 +307,9 @@ update_wiringpi
 #activate_rtc
 #activate_gps
 #activate_watchdog
+activate_i2c
+activate_overscan
+activate_mpc
 set_wallpaper
 copy_ringtone
 set_splash
