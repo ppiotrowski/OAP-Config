@@ -1,6 +1,7 @@
 #!/bin/bash
 
-DIR=$(dirname "$0")
+#DIR=$(dirname "$0")
+DIR=$(pwd)
 
 if [ "$EUID" -ne 0 ]
   then echo "Please use sudo."
@@ -11,6 +12,7 @@ fi
 function update_system() {
     apt-get update -y
     apt-get dist-upgrade -y
+    apt-get install uhubctl -y
     apt full-upgrade -y
     apt-get autoremove -y
 }
@@ -54,6 +56,7 @@ function remove_ssh_message() {
 function hide_taskbar() {
     sed -i 's/^  autohide=0/  autohide=1/' /home/pi/.config/lxpanel/LXDE-pi/panels/panel
     sed -i 's/^  heightwhenhidden=2/  heightwhenhidden=0/' /home/pi/.config/lxpanel/LXDE-pi/panels/panel
+    sed -i 's/^  autohide=0/  autohide=1/' /home/pi/.config/lxpanel/LXDE-pi/panels/panel
     sed -i 's/^@point-rpi//' /home/pi/.config/lxsession/LXDE-pi/autostart
 }
 
@@ -62,20 +65,20 @@ function rpi_init() {
     # Remove piwiz
     apt-get remove piwiz -y
     # WiFi
-    wpa_cli -i wlan0 set country NL
-    iw reg set NL
+    wpa_cli -i wlan0 set country PL
+    iw reg set PL
     wpa_cli -i wlan0 save_config
 
     # Timezone
     rm /etc/timezone
-    sh -c "echo 'Europe/Amsterdam' >> /etc/timezone"
+    sh -c "echo 'Europe/Warsaw' >> /etc/timezone"
     rm /etc/localtime
     dpkg-reconfigure --frontend noninteractive tzdata
 
     # Locale
-    sed -i 's/^# nl_NL.UTF-8 UTF-8/nl_NL.UTF-8 UTF-8/' /etc/locale.gen
+    sed -i 's/^# pl_PL.UTF-8 UTF-8/pl_PL.UTF-8 UTF-8/' /etc/locale.gen
     locale-gen
-    LC_ALL=nl_NL.UTF-8 LANG=nl_NL.UTF-8 LANGUAGE=nl_NL.UTF-8 update-locale LC_ALL=nl_NL.UTF-8 LANG=nl_NL.UTF-8 LANGUAGE=nl_NL.UTF-8
+    LC_ALL=pl_PL.UTF-8 LANG=pl_PL.UTF-8 LANGUAGE=pl_PL.UTF-8 update-locale LC_ALL=pl_PL.UTF-8 LANG=pl_PL.UTF-8 LANGUAGE=pl_PL.UTF-8
 }
 
 # Set Wallpaper
@@ -94,6 +97,8 @@ function copy_ringtone() {
 function custom_desktop() {
     install -d "/home/pi/.config/lxsession/LXDE-pi"
     cp /etc/xdg/lxsession/LXDE-pi/autostart /home/pi/.config/lxsession/LXDE-pi/autostart
+    sed -i 's/^single_click=0/single_click=1/' /home/pi/.config/libfm/libfm.conf
+    sed -i 's/^quick_exec=0/quick_exec=1/' /home/pi/.config/libfm/libfm.conf
 }
 
 # Set Splash boot screen
@@ -105,11 +110,12 @@ function set_splash() {
 
 # Remove unwanted OAP apps
 function config_oap() {
-    install -m 644 "$DIR"/config/openauto/openauto_applications.ini     "/home/pi/.openauto/config"
-    install -m 644 /boot/openauto_license.dat                           "/home/pi/.openauto"
+#   install -m 644 "$DIR"/config/openauto/openauto_applications.ini     "/home/pi/.openauto/config"
+#   install -m 644 /boot/openauto_license.dat                           "/home/pi/.openauto"
     install -m 644 "$DIR"/config/openauto/openauto_system.ini           "/home/pi/.openauto/config"
     install -m 644 "$DIR"/config/openauto/openauto_terms_of_service.dat "/home/pi/.openauto"
     install_radio_icons
+    sed -i 's/^PRETTY_HOSTNAME=OpenAuto Pro/PRETTY_HOSTNAME=Insignia/' /etc/machine-info
 }
 
 # Copy all the radio icons
@@ -151,6 +157,7 @@ function install_services() {
 
     install -d "/opt/OAP"
     install -m 755 "$DIR"/scripts/obd-keys.py                         "/opt/OAP/"
+    install -m 755 "$DIR"/scripts/obd.py                              "/opt/OAP/"
     install -m 755 "$DIR"/scripts/service_lightsensor.py              "/opt/OAP/"
     install -m 755 "$DIR"/scripts/service_OAP_startup.sh              "/opt/OAP/"
     install -m 755 "$DIR"/scripts/OBD_startup.sh                      "/opt/OAP/"
@@ -162,10 +169,10 @@ function install_services() {
 
 # Activate services
 function activate_services() {
-    systemctl enable OAP_startup.service
-    systemctl enable BT_Connect.service
-    systemctl enable lightsensor.service
-    systemctl enable dabboard.service
+#    systemctl enable OAP_startup.service
+#    systemctl enable BT_Connect.service
+#    systemctl enable lightsensor.service
+#    systemctl enable dabboard.service
     sed -i '/@bash \/opt\/OAP\/OBD_startup.sh/d' /home/pi/.config/lxsession/LXDE-pi/autostart
     sh -c "echo '@bash /opt/OAP/OBD_startup.sh' >> /home/pi/.config/lxsession/LXDE-pi/autostart"
 }
@@ -180,6 +187,9 @@ function update_wiringpi() {
 function install_python_packages() {
     pip3 install astral
     pip3 install PyUserInput
+    pip3 install smbus2
+    pip3 install pyusb
+    pip3 install python-can
     cd "$DIR"/python-OBD && python3 "$DIR"/python-OBD/setup.py install
 }
 
@@ -262,17 +272,17 @@ function activate_ds18b20() {
 
 killall autoapp
 update_system
-config_bootloader
+#config_bootloader
 rpi_init
 remove_ssh_message
 custom_desktop
-# hide_taskbar # better to show taskbar to easy access to wifi/bt settings
+hide_taskbar # better to show taskbar to easy access to wifi/bt settings
 install_python_packages
 update_wiringpi
-activate_dab
-activate_rtc
-activate_gps
-# activate_watchdog
+#activate_dab
+#activate_rtc
+#activate_gps
+#activate_watchdog
 set_wallpaper
 copy_ringtone
 set_splash
@@ -281,5 +291,5 @@ config_oap
 install_rearcam
 install_services
 activate_services
-activate_ds18b20
+#activate_ds18b20
 set_permissions
